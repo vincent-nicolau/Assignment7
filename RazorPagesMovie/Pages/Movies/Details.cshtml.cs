@@ -14,11 +14,11 @@ namespace RazorPagesMovie.Pages.Movies
     [Authorize]
     public class DetailsModel : PageModel
     {
-        private readonly RazorPagesMovie.Data.RazorPagesMovieContext _context;
+        private readonly IMovieRepo _repo;
 
-        public DetailsModel(RazorPagesMovie.Data.RazorPagesMovieContext context)
+        public DetailsModel(IMovieRepo repo)
         {
-            _context = context;
+            _repo = repo;
         }
 
         public Movie Movie { get; set; } = default!;
@@ -30,12 +30,11 @@ namespace RazorPagesMovie.Pages.Movies
                 return NotFound();
             }
 
-            var movie = await _context.Movie.FirstOrDefaultAsync(m => m.Id == id);
+            var movie = await _repo.GetByIdAsync(id.Value);
 
-            if (movie is not null)
+            if (movie != null)
             {
                 Movie = movie;
-
                 return Page();
             }
 

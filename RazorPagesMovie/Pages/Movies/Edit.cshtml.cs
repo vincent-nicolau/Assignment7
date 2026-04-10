@@ -15,12 +15,12 @@ namespace RazorPagesMovie.Pages.Movies
 {
     public class EditModel : PageModel
     {
-        private readonly RazorPagesMovie.Data.RazorPagesMovieContext _context;
+        private readonly IMovieRepo _repo;
         private readonly IWebHostEnvironment _env;
 
-        public EditModel(RazorPagesMovie.Data.RazorPagesMovieContext context, IWebHostEnvironment env)
+        public EditModel(IMovieRepo repo, IWebHostEnvironment env)
         {
-            _context = context;
+            _repo = repo;
             _env = env;
         }
 
@@ -34,7 +34,7 @@ namespace RazorPagesMovie.Pages.Movies
                 return NotFound();
             }
 
-            var movie =  await _context.Movie.FirstOrDefaultAsync(m => m.Id == id);
+            var movie =  await _repo.GetByIdAsync(id.Value);
             if (movie == null)
             {
                 return NotFound();
@@ -59,15 +59,15 @@ namespace RazorPagesMovie.Pages.Movies
                     HttpContext.Request.Form.Files[0]);
             }
 
-            _context.Attach(Movie).State = EntityState.Modified;
+            _repo.Update(Movie);
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _repo.SaveAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!MovieExists(Movie.Id))
+                if (!await _repo.ExistsAsync(Movie.Id))
                 {
                     return NotFound();
                 }
@@ -78,11 +78,6 @@ namespace RazorPagesMovie.Pages.Movies
             }
 
             return RedirectToPage("./Index");
-        }
-
-        private bool MovieExists(int id)
-        {
-            return _context.Movie.Any(e => e.Id == id);
         }
     }
 }

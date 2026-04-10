@@ -7,20 +7,17 @@ namespace RazorPagesMovie.Pages;
 
 public class IndexModel : PageModel
 {
-    private readonly RazorPagesMovieContext _context;
+    private readonly IMovieRepo _repo;
 
-    public IndexModel(RazorPagesMovieContext context)
+    public IndexModel(IMovieRepo repo)
     {
-        _context = context;
+        _repo = repo;
     }
 
     public IList<Movie> Movies { get; set; } = new List<Movie>();
 
     public async Task OnGetAsync()
     {
-        Movies = await _context.Movie
-            .OrderBy(m => m.Rank)
-            .ThenBy(m => m.Title)
-            .ToListAsync();
+        Movies = (await _repo.GetAllAsync()).ToList();
     }
 }

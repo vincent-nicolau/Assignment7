@@ -14,11 +14,11 @@ namespace RazorPagesMovie.Pages.Movies;
 
 public class IndexModel : PageModel
 {
-    private readonly RazorPagesMovie.Data.RazorPagesMovieContext _context;
+    private readonly IMovieRepo _repo;
 
-    public IndexModel(RazorPagesMovie.Data.RazorPagesMovieContext context)
+    public IndexModel(IMovieRepo repo)
     {
-        _context = context;
+        _repo = repo;
     }
 
     public IList<Movie> Movie { get;set; } = default!;
@@ -34,14 +34,8 @@ public class IndexModel : PageModel
 
     public async Task OnGetAsync()
     {
-        // <snippet_search_linqQuery>
-        IQueryable<string> genreQuery = from m in _context.Movie
-                                        orderby m.Genre
-                                        select m.Genre;
-        // </snippet_search_linqQuery>
-
-        var movies = from m in _context.Movie
-                     select m;
+        var movies = await _repo.GetAllAsync();
+        var genres = await _repo.GetGenresAsync();
 
         if (!string.IsNullOrEmpty(SearchString))
         {
@@ -52,10 +46,10 @@ public class IndexModel : PageModel
         {
             movies = movies.Where(x => x.Genre == MovieGenre);
         }
-
-        // <snippet_search_selectList>
-        Genres = new SelectList(await genreQuery.Distinct().ToListAsync());
-        // </snippet_search_selectList>
-        Movie = await movies.OrderBy(m => m.Rank).ToListAsync();
+        Genres = new SelectList(genres);
+        Movie = movies
+            .OrderBy(m => m.Rank)
+            .ThenBy(m => m.Title)
+            .ToList();
     }
 }
