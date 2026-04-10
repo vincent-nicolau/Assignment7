@@ -17,23 +17,19 @@ namespace RazorPagesMovie.Pages.Movies
     {
         private readonly IMovieRepo _repo;
         private readonly IWebHostEnvironment _env;
-
         public EditModel(IMovieRepo repo, IWebHostEnvironment env)
         {
             _repo = repo;
             _env = env;
         }
-
         [BindProperty]
         public Movie Movie { get; set; } = default!;
-
         public async Task<IActionResult> OnGetAsync(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
-
             var movie =  await _repo.GetByIdAsync(id.Value);
             if (movie == null)
             {
@@ -42,25 +38,19 @@ namespace RazorPagesMovie.Pages.Movies
             Movie = movie;
             return Page();
         }
-
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more information, see https://aka.ms/RazorPagesCRUD.
         public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)
             {
                 return Page();
             }
-
             if (HttpContext.Request.Form.Files.Count > 0)
             {
                 Movie.PictureUri = PictureHelper.UploadNewImage(
                     _env,
                     HttpContext.Request.Form.Files[0]);
             }
-
             _repo.Update(Movie);
-
             try
             {
                 await _repo.SaveAsync();
@@ -76,7 +66,6 @@ namespace RazorPagesMovie.Pages.Movies
                     throw;
                 }
             }
-
             return RedirectToPage("./Index");
         }
     }

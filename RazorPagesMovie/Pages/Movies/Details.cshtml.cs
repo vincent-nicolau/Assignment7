@@ -15,29 +15,23 @@ namespace RazorPagesMovie.Pages.Movies
     public class DetailsModel : PageModel
     {
         private readonly IMovieRepo _repo;
-
         public DetailsModel(IMovieRepo repo)
         {
             _repo = repo;
         }
-
         public Movie Movie { get; set; } = default!;
-
         public async Task<IActionResult> OnGetAsync(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
-
             var movie = await _repo.GetByIdAsync(id.Value);
-
             if (movie != null)
             {
                 Movie = movie;
                 return Page();
             }
-
             return NotFound();
         }
     }

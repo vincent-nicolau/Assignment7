@@ -17,13 +17,10 @@ namespace RazorPagesMovie.Models
                 {
                     throw new ArgumentNullException("Null RazorPagesMovieContext");
                 }
-
-                // Look for any movies.
                 if (context.Movie.Any())
                 {
-                    return;   // DB has been seeded
+                    return;
                 }
-
                 context.Movie.AddRange(
                     new Movie
                     {
@@ -33,7 +30,6 @@ namespace RazorPagesMovie.Models
                         Price = 7.99M,
                         Rank = 2
                     },
-
                     new Movie
                     {
                         Title = "Ghostbusters ",
@@ -42,7 +38,6 @@ namespace RazorPagesMovie.Models
                         Price = 8.99M,
                         Rank = 4
                     },
-
                     new Movie
                     {
                         Title = "Ghostbusters 2",
@@ -51,7 +46,6 @@ namespace RazorPagesMovie.Models
                         Price = 9.99M,
                         Rank = 1
                     },
-
                     new Movie
                     {
                         Title = "Rio Bravo",

@@ -13,48 +13,39 @@ namespace RazorPagesMovie.Pages.Movies
     public class DeleteModel : PageModel
     {
         private readonly IMovieRepo _repo;
-
         public DeleteModel(IMovieRepo repo)
         {
             _repo = repo;
         }
-
         [BindProperty]
         public Movie Movie { get; set; } = default!;
-
         public async Task<IActionResult> OnGetAsync(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
-
             var movie = await _repo.GetByIdAsync(id.Value);
-
             if (movie is not null)
             {
                 Movie = movie;
 
                 return Page();
             }
-
             return NotFound();
         }
-
         public async Task<IActionResult> OnPostAsync(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
-
             var movie = await _repo.GetByIdAsync(id.Value);
             if (movie != null)
             {
                 _repo.Delete(movie);
                 await _repo.SaveAsync();
             }
-
             return RedirectToPage("./Index");
         }
     }

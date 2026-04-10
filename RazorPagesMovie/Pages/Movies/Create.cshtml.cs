@@ -21,16 +21,12 @@ namespace RazorPagesMovie.Pages.Movies
             _repo = repo;
             _env = env;
         }
-
         public IActionResult OnGet()
         {
             return Page();
         }
-
         [BindProperty]
         public Movie Movie { get; set; } = default!;
-
-        // For more information, see https://aka.ms/RazorPagesCRUD.
         public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)
@@ -44,10 +40,8 @@ namespace RazorPagesMovie.Pages.Movies
                     _env,
                     HttpContext.Request.Form.Files[0]);
             }
-
             await _repo.AddAsync(Movie);
             await _repo.SaveAsync();
-
             return RedirectToPage("./Index");
         }
     }
